@@ -72,6 +72,8 @@ static struct device thermal_message_dev;
 static atomic_t switch_mode = ATOMIC_INIT(-1);
 static atomic_t temp_state = ATOMIC_INIT(0);
 static char boost_buf[128];
+static DEFINE_MUTEX(board_sensor_temp_lock);
+static char board_sensor_temp[128];
 #endif
 
 /*
@@ -1774,6 +1776,38 @@ thermal_temp_state_store(struct device *dev,
 static DEVICE_ATTR(temp_state, 0664,
 		   thermal_temp_state_show, thermal_temp_state_store);
 
+static ssize_t
+thermal_board_sensor_temp_show(struct device *dev,
+			       struct device_attribute *attr, char *buf)
+{
+	ssize_t len;
+
+	mutex_lock(&board_sensor_temp_lock);
+	len = scnprintf(buf, PAGE_SIZE, "%s", board_sensor_temp);
+	mutex_unlock(&board_sensor_temp_lock);
+
+	return len;
+}
+
+static ssize_t
+thermal_board_sensor_temp_store(struct device *dev,
+				struct device_attribute *attr,
+				const char *buf, size_t len)
+{
+	size_t copy_len = min(len, sizeof(board_sensor_temp) - 1);
+
+	mutex_lock(&board_sensor_temp_lock);
+	memcpy(board_sensor_temp, buf, copy_len);
+	board_sensor_temp[copy_len] = '\0';
+	mutex_unlock(&board_sensor_temp_lock);
+
+	return len;
+}
+
+static DEVICE_ATTR(board_sensor_temp, 0664,
+		   thermal_board_sensor_temp_show,
+		   thermal_board_sensor_temp_store);
+
 static int create_thermal_message_node(void) {
 	int ret = 0;
 
@@ -1801,12 +1835,19 @@ static int create_thermal_message_node(void) {
 		ret = sysfs_create_file(&thermal_message_dev.kobj, &dev_attr_temp_state.attr);
 		if (ret < 0)
 			pr_warn("Thermal: create temp state node failed\n");
+
+		ret = sysfs_create_file(&thermal_message_dev.kobj,
+					&dev_attr_board_sensor_temp.attr);
+		if (ret < 0)
+			pr_warn("Thermal: create board sensor temp node failed\n");
 	}
 
 	return ret;
 }
 
 static void destroy_thermal_message_node(void) {
+	sysfs_remove_file(&thermal_message_dev.kobj,
+			  &dev_attr_board_sensor_temp.attr);
 	sysfs_remove_file(&thermal_message_dev.kobj, &dev_attr_temp_state.attr);
 	sysfs_remove_file(&thermal_message_dev.kobj, &dev_attr_sconfig.attr);
 	sysfs_remove_file(&thermal_message_dev.kobj, &dev_attr_boost.attr);
