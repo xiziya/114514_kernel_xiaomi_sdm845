@@ -990,11 +990,21 @@ static int __init ramoops_memreserve(char *p)
 		return 1;
 
 	size = memparse(p, &p) & PAGE_MASK;
+	/*
+	 * Keep four independent persistent records.  The old Xiaomi shim only
+	 * reserved console and pmsg space, leaving record_size at zero, so
+	 * ramoops never created a dmesg crash record.
+	 */
+	if (size < 4 * PAGE_SIZE)
+		return 1;
 	ramoops_data.mem_size = size;
 	ramoops_data.mem_address = 0xB0000000;
-	ramoops_data.console_size = size / 2;
-	ramoops_data.pmsg_size = size / 2;
+	ramoops_data.record_size = size / 4;
+	ramoops_data.console_size = size / 4;
+	ramoops_data.ftrace_size = size / 4;
+	ramoops_data.pmsg_size = size / 4;
 	ramoops_data.dump_oops = 1;
+	ramoops_data.flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
 
 	pr_info("msm_reserve_ramoops_memory addr=%llx,size=%lx\n",
 		ramoops_data.mem_address, ramoops_data.mem_size);

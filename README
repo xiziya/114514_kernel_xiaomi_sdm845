@@ -17,3 +17,25 @@ See Documentation/00-INDEX for a list of what is contained in each file.
 Please read the Documentation/process/changes.rst file, as it contains the
 requirements for building and running the kernel, and information about
 the problems which may result by upgrading your kernel.
+
+Polaris HyperOS 4 兼容分支
+=========================
+
+当前分支为 ``hyperos4-thermal-compat``，用于 Polaris 的 HyperOS 4 移植：
+
+* 将 SDE REG_DMA 设备树值对齐到 ROM 显示栈使用的 REG_DMA v1.1 实现。
+* JDI 与 EBBG 屏幕补齐 ROM 刷新率表（60、55、50、30、1 Hz），保持动态
+  刷新率与厂商 HAL 兼容。
+* 保留现有 Polaris 温控 ABI/配置以及 Gold 集群温控前置降频提交。
+* Xiaomi ramoops shim 将预留的 4 MiB 划分为 dmesg/oops、console、ftrace
+  和 pmsg 四类记录，并在 Polaris vendor 配置中启用 ``PSTORE_FTRACE``、
+  ``DEBUG_FS``、``FUNCTION_TRACER``。这会改善重启后的崩溃取证，但对于
+  没有 oops/panic 的纯显示卡死，不能保证一定产生记录。
+
+显示设备树文件和 ``fs/pstore/ram.c`` 已通过 Polaris DTB 编译检查。完整镜像
+编译时，旧版 TAS2557 ioctl 宏可能触发 Clang 的 ``-Wshift-overflow``；在
+``-Werror`` 环境下需要使用工作流提供的警告降级选项。
+
+Wi-Fi 优化暂缓。本分支当前 WLAN 内核配置和厂商配置与 ROM 基线一致，而同名
+多 AP 漫游、DFS 信道选择、握持遮挡天线也会产生类似现象。后续修改驱动或厂商
+INI 前，应先隔离这些变量，并采集 RSSI、BSSID、频率和 CNSS 日志。
