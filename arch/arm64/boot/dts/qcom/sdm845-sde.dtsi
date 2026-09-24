@@ -225,8 +225,7 @@
 		qcom,sde-inline-rot-clk-ctrl = <0x2bc 0x8>, <0x2bc 0xc>;
 
 		qcom,sde-reg-dma-off = <0>;
-		/* REG_DMA_VER_1_1 as consumed by sde_reg_dma_init(). */
-		qcom,sde-reg-dma-version = <0x10001>;
+		qcom,sde-reg-dma-version = <0x1>;
 		qcom,sde-reg-dma-trigger-off = <0x119c>;
 
 		qcom,sde-sspp-vig-blocks {

@@ -17,32 +17,3 @@ See Documentation/00-INDEX for a list of what is contained in each file.
 Please read the Documentation/process/changes.rst file, as it contains the
 requirements for building and running the kernel, and information about
 the problems which may result by upgrading your kernel.
-
-Polaris HyperOS 4 兼容分支
-=========================
-
-当前分支为 ``hyperos4-thermal-compat``，用于 Polaris 的 HyperOS 4 移植：
-
-* 将 SDE REG_DMA 设备树值对齐到 ROM 显示栈使用的 REG_DMA v1.1 实现。
-* JDI 与 EBBG 屏幕保持已验证的 60/55 Hz 刷新率表；不暴露尚未验证的
-  50/30/1 Hz 模式，避免旧版 DSI porch 切换路径误选低刷新率而拖慢动画。
-* 保留现有 Polaris 温控 ABI/配置以及 Gold 集群温控前置降频提交。
-* Xiaomi ramoops shim 将预留的 4 MiB 划分为 dmesg/oops、console 和 pmsg
-  记录。未启用函数跟踪插桩，以免在旧版 arm64 内核中增加全局函数调用
-  开销。持久日志改善重启后的崩溃取证，但对于没有 oops/panic 的纯显示卡死，
-  不能保证一定产生记录。
-
-显示设备树文件和 ``fs/pstore/ram.c`` 已通过 Polaris DTB 编译检查。完整镜像
-编译时，旧版 TAS2557 ioctl 宏可能触发 Clang 的 ``-Wshift-overflow``；在
-``-Werror`` 环境下需要使用工作流提供的警告降级选项。
-
-Wi-Fi 驱动在工作流识别到完整 Qualcomm qcacld 源码布局时以内置方式构建。
-Polaris 配置同时固定 ``QCA_CLD_WLAN``、``ICNSS``、``ICNSS_QMI``、
-``CNSS_UTILS`` 和 ``CNSS_GENL`` 为内置，避免 qcacld 已进入内核而平台服务仍
-等待 vendor module 的情况。内核能编译进驱动不等同于启动时 WLAN 固件和平台
-服务已成功握手；运行时无法开启时，应先保存 `dmesg` 中的 `icnss`、`cnss`、
-`wlan`、`qmi` 错误及 `dumpsys wifi`，再判断是固件路径、平台探测还是驱动
-初始化问题。未经这些日志，不改通用 WLAN 初始化或射频参数。
-
-此前尝试增加低刷新率模式和函数跟踪插桩后出现动画明显变慢，因此已撤销这两项
-改动；后续显示修改须先在设备上确认面板时序和切换行为。
