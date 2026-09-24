@@ -990,16 +990,31 @@ static int __init ramoops_memreserve(char *p)
 		return 1;
 
 	size = memparse(p, &p) & PAGE_MASK;
+	if (!size)
+		return 1;
+
 	ramoops_data.mem_size = size;
 	ramoops_data.mem_address = 0xB0000000;
-	ramoops_data.console_size = size / 2;
-	ramoops_data.pmsg_size = size / 2;
+	/*
+	 * Keep the reserved area useful for actual crash dumps.  The old
+	 * layout consumed the whole region with console/pmsg buffers, leaving
+	 * no DMESG zone for oops/panic records.  Leave half of the region for
+	 * eight 256 KiB records when the default 4 MiB reservation is used.
+	 */
+	ramoops_data.record_size = size / 16;
+	ramoops_data.console_size = size / 4;
+	ramoops_data.pmsg_size = size / 8;
+#if defined(CONFIG_PSTORE_FTRACE)
+	ramoops_data.ftrace_size = size / 8;
+	ramoops_data.flags = RAMOOPS_FLAG_FTRACE_PER_CPU;
+#endif
 	ramoops_data.dump_oops = 1;
 
 	pr_info("msm_reserve_ramoops_memory addr=%llx,size=%lx\n",
 		ramoops_data.mem_address, ramoops_data.mem_size);
-	pr_info("msm_reserve_ramoops_memory record_size=%lx,ftrace_size=%lx\n",
-		ramoops_data.record_size, ramoops_data.ftrace_size);
+	pr_info("msm_reserve_ramoops_memory record=%lx,console=%lx,pmsg=%lx,ftrace=%lx\n",
+		ramoops_data.record_size, ramoops_data.console_size,
+		ramoops_data.pmsg_size, ramoops_data.ftrace_size);
 
 	memblock_reserve(ramoops_data.mem_address, ramoops_data.mem_size);
 
