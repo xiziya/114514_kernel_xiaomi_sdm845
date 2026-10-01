@@ -12,12 +12,14 @@ if [[ -e "$OUT_DIR/.config" ]]; then
 fi
 mkdir -p "$OUT_DIR"
 export PATH="$CLANG_BIN:$GCC64_BIN:$GCC32_BIN:$PATH"
-cp "$kernel_source/arch/arm64/configs/hyperos4_polaris_defconfig" "$OUT_DIR/.config"
+python3 "$kernel_source/tools/hyperos4/check-configs.py"     "$kernel_source/arch/arm64/configs/hyperos4_polaris_defconfig"     "$kernel_source/arch/arm64/configs/vendor/xiaomi/polaris.config"
+bash "$kernel_source/scripts/kconfig/merge_config.sh" -m -O "$OUT_DIR"     "$kernel_source/arch/arm64/configs/hyperos4_polaris_defconfig"     "$kernel_source/arch/arm64/configs/vendor/xiaomi/polaris.config"
 make_args=(-C "$kernel_source" "O=$OUT_DIR" ARCH=arm64 "CC=$CLANG_BIN/clang"
     CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-gnu-
     CROSS_COMPILE_ARM32=arm-linux-gnueabi- LD=ld.lld AR=llvm-ar NM=llvm-nm
     OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip)
 make "${make_args[@]}" olddefconfig
+python3 "$kernel_source/tools/hyperos4/check-configs.py"     "$kernel_source/arch/arm64/configs/hyperos4_polaris_defconfig"     "$kernel_source/arch/arm64/configs/vendor/xiaomi/polaris.config" "$OUT_DIR/.config"
 for option in ARCH_SDM845 WLAN QCA_CLD_WLAN QCOM_KGSL PSTORE PSTORE_RAM EROFS_FS BPF_SYSCALL; do
     grep -qx "CONFIG_$option=y" "$OUT_DIR/.config" || { echo "Missing $option" >&2; exit 1; }
 done

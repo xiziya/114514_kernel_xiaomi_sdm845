@@ -23,14 +23,42 @@ and ARM32 cross-toolchains:
     bash tools/hyperos4/build-polaris.sh
 
 Output: $OUT_DIR/arch/arm64/boot/Image.gz-dtb (kernel plus device trees).
-The config at arch/arm64/configs/hyperos4_polaris_defconfig is the FULL resolved
-config from the ROM build, not a minimal fragment. Use the script's olddefconfig
-step, not the original vendor defconfig alone. Different compiler probes, Git
-revision and build timestamps can change output bytes.
+Configuration input is now exactly these two files, in this order:
 
-The previous compatibility branch had thermal modifications not present in
-this ROM kernel. They are replaced by this source snapshot. Its old tip remains
-at hyperos4-thermal-compat-pre-overwrite-20261001 (0153709c54678cb11b0a4f8482088152f4421d1d).
+1. arch/arm64/configs/hyperos4_polaris_defconfig
+2. arch/arm64/configs/vendor/xiaomi/polaris.config
+
+The HyperOS base merges all original vendor/sdm845-perf_defconfig settings,
+Xiaomi common settings and the reviewed OS409 resolved config. Its 5093 options
+exclude the 12 device-specific options in polaris.config, which remains unchanged.
+Do not apply vendor/sdm845-perf_defconfig or sdm845-common.config again afterwards.
+The build script merges the two files, runs olddefconfig, and checks for duplicate
+options, overlap and lost device settings. Kconfig dependencies are still resolved
+by the kernel build system, not by text concatenation alone.
+
+Three differences from the original SDM845 base are intentionally resolved using
+the already-built Xiaomi/HyperOS values:
+- CONFIG_CMDLINE="cgroup_disable=pressure ramoops_memreserve=4M"
+- CONFIG_INPUT_QTI_HAPTICS is disabled; CONFIG_LEDS_QPNP_HAPTICS=y
+- CONFIG_CC_WERROR is disabled, as in sdm845-common.config
+
+With Android clang r416183b and the same GNU cross-toolchains, olddefconfig for
+the combined inputs matches all 5105 options of the kernel used in OS409 V1/V1.1.
+This is a config equivalence check, not a new kernel build or hardware acceptance.
+The record is tools/hyperos4/config-merge-validation.json. The old built config
+hash in source-build.json describes the combined resolved config, not the new
+base file alone. Different compilers may change capability probes and output.
+
+For a custom SukiSU build, start from these combined inputs, enable its required
+options after applying its source integration, then run olddefconfig and inspect
+the final .config. The supplied baseline build script deliberately rejects root
+options; adapt that explicit check in your SukiSU build workflow. The branch does
+not itself include SukiSU. Preserve the device fragment and compatibility options.
+
+The original hyperos4-thermal-compat branch has thermal modifications not
+present in this ROM kernel. That branch remains unchanged; this pre branch uses
+the actual ROM kernel snapshot. The old tip is additionally preserved at
+hyperos4-thermal-compat-pre-overwrite-20261001 (0153709c54678cb11b0a4f8482088152f4421d1d).
 
 The ROM boot image also includes first-stage static EROFS fstab/ramdisk changes
 and removal of lpm_levels.sleep_disabled=1. These are NOT kernel source changes.

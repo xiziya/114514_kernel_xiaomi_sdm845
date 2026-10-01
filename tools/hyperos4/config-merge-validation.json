@@ -1,0 +1,44 @@
+{
+  "parent": "699e4553c73783c86549b381bfcc5b68c1514703",
+  "counts": {
+    "sdm845": 696,
+    "hyperos": 5105,
+    "common": 26,
+    "polaris": 12
+  },
+  "duplicates": {
+    "sdm845": [],
+    "hyperos": [],
+    "common": [],
+    "polaris": []
+  },
+  "conflicts": [
+    {
+      "key": "CONFIG_CMDLINE",
+      "sdm845": "\"cgroup_disable=pressure\"",
+      "hyperos": "\"cgroup_disable=pressure ramoops_memreserve=4M\""
+    },
+    {
+      "key": "CONFIG_INPUT_QTI_HAPTICS",
+      "sdm845": "y",
+      "hyperos": "n"
+    },
+    {
+      "key": "CONFIG_CC_WERROR",
+      "sdm845": "y",
+      "hyperos": "n"
+    }
+  ],
+  "base_only": {},
+  "common_differences": {},
+  "polaris_differences": {},
+  "status": "passed",
+  "resolved_differences": {},
+  "merged_base_count": 5093,
+  "polaris_count": 12,
+  "combined_config_count": 5105,
+  "overlapping_options": 0,
+  "merged_defconfig_sha256": "4b461f3cacffa1360098cde9d20d9840653b8c1bc9f470e44852cebeb248ca1e",
+  "polaris_fragment_sha256": "fe53dcaac4923cd4858cf79933b449dd82f7ea65a08f46ca68124c7c9046f25a",
+  "validated_config_sha256": "6ea8da5e2a113bfefc57ff515a49c83d7882298f600a11eca0ec4c966db69e88"
+}
