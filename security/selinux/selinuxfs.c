@@ -1909,6 +1909,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
 	sel_remove_entries(fsi->policycap_dir);
 
 	for (iter = 0; iter <= POLICYDB_CAPABILITY_MAX; iter++) {
+		/* Gaps are reserved ABI slots, not implemented capabilities. */
+		if (iter < ARRAY_SIZE(selinux_policycap_names) &&
+		    !selinux_policycap_names[iter])
+			continue;
 		if (iter < ARRAY_SIZE(selinux_policycap_names))
 			dentry = d_alloc_name(fsi->policycap_dir,
 					      selinux_policycap_names[iter]);

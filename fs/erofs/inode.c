@@ -199,9 +199,20 @@ static int erofs_fill_symlink(struct inode *inode, void *data,
 	struct erofs_inode *vi = EROFS_I(inode);
 	char *lnk;
 
-	/* if it cannot be handled with fast symlink scheme */
+	if (inode->i_size < 0)
+		return -EFSCORRUPTED;
+
+	/*
+	 * The inline payload may follow the inode/xattrs in a later metadata
+	 * page. Only use a fast symlink when every byte is in this page;
+	 * otherwise the normal mapping path locates and validates its page.
+	 * Check each subtraction before using it to avoid size overflow.
+	 */
 	if (vi->datalayout != EROFS_INODE_FLAT_INLINE ||
-	    inode->i_size >= PAGE_SIZE) {
+	    inode->i_size >= PAGE_SIZE ||
+	    m_pofs > PAGE_SIZE ||
+	    vi->xattr_isize > PAGE_SIZE - m_pofs ||
+	    inode->i_size > PAGE_SIZE - m_pofs - vi->xattr_isize) {
 		inode->i_op = &erofs_symlink_iops;
 		return 0;
 	}
@@ -211,16 +222,6 @@ static int erofs_fill_symlink(struct inode *inode, void *data,
 		return -ENOMEM;
 
 	m_pofs += vi->xattr_isize;
-	/* inline symlink data shouldn't cross page boundary as well */
-	if (m_pofs + inode->i_size > PAGE_SIZE) {
-		kfree(lnk);
-		erofs_err(inode->i_sb,
-			  "inline data cross block boundary @ nid %llu",
-			  vi->nid);
-		DBG_BUGON(1);
-		return -EFSCORRUPTED;
-	}
-
 	memcpy(lnk, data + m_pofs, inode->i_size);
 	lnk[inode->i_size] = '\0';
 

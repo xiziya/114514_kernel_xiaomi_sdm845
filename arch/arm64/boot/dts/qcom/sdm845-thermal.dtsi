@@ -640,18 +640,6 @@
 		wake-capable-sensor;
 		thermal-governor = "step_wise";
 		trips {
-			cpu0_gold_throttle1: cpu0-gold-throttle1 {
-				temperature = <82000>;
-				hysteresis = <4000>;
-				type = "passive";
-			};
-
-			cpu0_gold_throttle2: cpu0-gold-throttle2 {
-				temperature = <88000>;
-				hysteresis = <5000>;
-				type = "passive";
-			};
-
 			emerg_config4: emerg-config4 {
 				temperature = <110000>;
 				hysteresis = <10000>;
@@ -659,16 +647,6 @@
 			};
 		};
 		cooling-maps {
-			cpu0_gold_throttle1_cdev {
-				trip = <&cpu0_gold_throttle1>;
-				cooling-device = <&CPU4 5 5>;
-			};
-
-			cpu0_gold_throttle2_cdev {
-				trip = <&cpu0_gold_throttle2>;
-				cooling-device = <&CPU4 9 9>;
-			};
-
 			emerg_cdev4 {
 				trip = <&emerg_config4>;
 				cooling-device = <&cpu4_isolate 1 1>;
@@ -683,18 +661,6 @@
 		wake-capable-sensor;
 		thermal-governor = "step_wise";
 		trips {
-			cpu1_gold_throttle1: cpu1-gold-throttle1 {
-				temperature = <82000>;
-				hysteresis = <4000>;
-				type = "passive";
-			};
-
-			cpu1_gold_throttle2: cpu1-gold-throttle2 {
-				temperature = <88000>;
-				hysteresis = <5000>;
-				type = "passive";
-			};
-
 			emerg_config5: emerg-config5 {
 				temperature = <110000>;
 				hysteresis = <10000>;
@@ -702,16 +668,6 @@
 			};
 		};
 		cooling-maps {
-			cpu1_gold_throttle1_cdev {
-				trip = <&cpu1_gold_throttle1>;
-				cooling-device = <&CPU4 5 5>;
-			};
-
-			cpu1_gold_throttle2_cdev {
-				trip = <&cpu1_gold_throttle2>;
-				cooling-device = <&CPU4 9 9>;
-			};
-
 			emerg_cdev5 {
 				trip = <&emerg_config5>;
 				cooling-device = <&cpu5_isolate 1 1>;
@@ -726,18 +682,6 @@
 		wake-capable-sensor;
 		thermal-governor = "step_wise";
 		trips {
-			cpu2_gold_throttle1: cpu2-gold-throttle1 {
-				temperature = <82000>;
-				hysteresis = <4000>;
-				type = "passive";
-			};
-
-			cpu2_gold_throttle2: cpu2-gold-throttle2 {
-				temperature = <88000>;
-				hysteresis = <5000>;
-				type = "passive";
-			};
-
 			emerg_config6: emerg-config6 {
 				temperature = <110000>;
 				hysteresis = <10000>;
@@ -745,16 +689,6 @@
 			};
 		};
 		cooling-maps {
-			cpu2_gold_throttle1_cdev {
-				trip = <&cpu2_gold_throttle1>;
-				cooling-device = <&CPU4 5 5>;
-			};
-
-			cpu2_gold_throttle2_cdev {
-				trip = <&cpu2_gold_throttle2>;
-				cooling-device = <&CPU4 9 9>;
-			};
-
 			emerg_cdev6 {
 				trip = <&emerg_config6>;
 				cooling-device = <&cpu6_isolate 1 1>;
@@ -769,18 +703,6 @@
 		wake-capable-sensor;
 		thermal-governor = "step_wise";
 		trips {
-			cpu3_gold_throttle1: cpu3-gold-throttle1 {
-				temperature = <82000>;
-				hysteresis = <4000>;
-				type = "passive";
-			};
-
-			cpu3_gold_throttle2: cpu3-gold-throttle2 {
-				temperature = <88000>;
-				hysteresis = <5000>;
-				type = "passive";
-			};
-
 			emerg_config7: emerg-config7 {
 				temperature = <110000>;
 				hysteresis = <10000>;
@@ -788,16 +710,6 @@
 			};
 		};
 		cooling-maps {
-			cpu3_gold_throttle1_cdev {
-				trip = <&cpu3_gold_throttle1>;
-				cooling-device = <&CPU4 5 5>;
-			};
-
-			cpu3_gold_throttle2_cdev {
-				trip = <&cpu3_gold_throttle2>;
-				cooling-device = <&CPU4 9 9>;
-			};
-
 			emerg_cdev7 {
 				trip = <&emerg_config7>;
 				cooling-device = <&cpu7_isolate 1 1>;

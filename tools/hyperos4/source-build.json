@@ -1,0 +1,35 @@
+{
+  "commit": "1f326a9202472e8228c2a08ebfd4fdb83da52675",
+  "source_patch_sha256": "d43db44d415cac4b32f7d43c577b1319c76913e83234c4f5bb34f643b3b5fb26",
+  "display_config_sha256": "705d3ac2359c633f6fca0a2c135b29f69432855f1922831c00a5688485446529",
+  "config_sha256": "6ea8da5e2a113bfefc57ff515a49c83d7882298f600a11eca0ec4c966db69e88",
+  "required_configs": {
+    "CONFIG_ARCH_SDM845": "y",
+    "CONFIG_WLAN": "y",
+    "CONFIG_QCA_CLD_WLAN": "y",
+    "CONFIG_QCOM_KGSL": "y",
+    "CONFIG_PSTORE": "y",
+    "CONFIG_PSTORE_RAM": "y",
+    "CONFIG_EROFS_FS": "y",
+    "CONFIG_BPF_SYSCALL": "y"
+  },
+  "root_integration": false,
+  "actual_kernel_abi": "4.19.325",
+  "reported_release": "5.15.221",
+  "compiler": "Android clang r416183b 12.0.5",
+  "artifacts": {
+    "arch/arm64/boot/Image.gz-dtb": {
+      "sha256": "5d7f04df2f68756b639735695e29169bc098bf7e214b0ec1d868185ae83bb58c",
+      "bytes": 28229224
+    },
+    "arch/arm64/boot/Image.gz": {
+      "sha256": "aa2268fca84352e2fdf934d2d7e7dd7e9a3a0376cbc4bd79cd577cf7fe4f5bb5",
+      "bytes": 21950892
+    },
+    "System.map": {
+      "sha256": "9e510c0701afebfbc17c97ce9cdb3ab0fbf5864fd3de7a0a6f8855998d4db6fe",
+      "bytes": 10746864
+    }
+  },
+  "hardware_acceptance": "Booted per user report; calls/SMS/brightness/microphone/blur unresolved"
+}
